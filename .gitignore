@@ -1,0 +1,6 @@
+files/.ssh/*
+!files/.ssh/config
+
+files/.pyenv/versions/
+files/.pyenv/plugins/
+files/.pyenv/cache/
