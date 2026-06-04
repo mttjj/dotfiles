@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 set -u -o pipefail
 
-DOTFILES_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOTFILES_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 link() {
   local src="$1"
   local dst="$2"
   if [ -e "$src" ]; then
-    "$DOTFILES_ROOT/link.sh" "$src" "$dst" || echo "Link failed: $dst (continuing)"
+    "$DOTFILES_ROOT/scripts/link.sh" "$src" "$dst" || echo "Link failed: $dst (continuing)"
   else
     echo "Missing source: $src (skipping link to $dst)"
   fi
@@ -32,7 +32,7 @@ if command -v git >/dev/null 2>&1; then
   git config --global core.excludesfile "$HOME/.config/git/ignore" || echo "git core.excludesfile failed (continuing)"
 fi
 
-# 2) Brew bundle (resilient)
+# 2) Brew bundle
 if command -v brew >/dev/null 2>&1; then
   if [ -f "$DOTFILES_ROOT/Brewfile" ]; then
     brew bundle --file "$DOTFILES_ROOT/Brewfile" || echo "brew bundle failed (continuing)"
@@ -43,7 +43,7 @@ else
   echo "Homebrew not found; skipping brew bundle."
 fi
 
-# 3) pyenv install + global (resilient)
+# 3) pyenv install + global
 if command -v pyenv >/dev/null 2>&1; then
   if [ -f "$HOME/.pyenv/version" ]; then
     VER="$(sed -e 's/#.*$//' -e '/^[[:space:]]*$/d' "$HOME/.pyenv/version" | head -n1)"
@@ -60,9 +60,9 @@ else
   echo "pyenv not found; skipping pyenv install."
 fi
 
-# 4) MAS apps (resilient)
-if [ -x "$DOTFILES_ROOT/install_mas_apps.sh" ]; then
-  "$DOTFILES_ROOT/install_mas_apps.sh" || echo "MAS install step failed (continuing)"
+# 4) MAS apps
+if [ -x "$DOTFILES_ROOT/scripts/install_mas_apps.sh" ]; then
+  "$DOTFILES_ROOT/scripts/install_mas_apps.sh" || echo "MAS install step failed (continuing)"
 fi
 
 echo "Done."

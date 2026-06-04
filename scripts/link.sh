@@ -7,7 +7,7 @@ set -euo pipefail
 source_file="${1:?source_file required}"
 dest_path="${2:?dest_path required}"
 
-DOTFILES_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOTFILES_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 abspath() {
   local p="$1"
