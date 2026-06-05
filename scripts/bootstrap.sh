@@ -60,7 +60,6 @@ step_install_homebrew() {
     return 0
   fi
 
-  # Best-effort: homebrew path on Apple Silicon
   if [ -x "/opt/homebrew/bin/brew" ]; then
     export PATH="/opt/homebrew/bin:$PATH"
   fi
@@ -108,7 +107,16 @@ step_install_apps() {
   echo "==> Step 3 complete"
 }
 
-# -------- Step 4: App defaults (Finder now; extend later) --------
+# -------- Defaults runners --------
+apply_system_defaults() {
+  local system_script="$DOTFILES_ROOT/scripts/apply_system_defaults.sh"
+  if [ -x "$system_script" ]; then
+    "$system_script" || echo "System defaults failed (continuing)"
+  else
+    echo "System defaults script not found: $system_script (skipping)"
+  fi
+}
+
 apply_finder_defaults() {
   local finder_script="$DOTFILES_ROOT/scripts/apply_finder_defaults.sh"
   if [ -x "$finder_script" ]; then
@@ -118,42 +126,60 @@ apply_finder_defaults() {
   fi
 }
 
-step_app_defaults_all() {
-  echo "==> App defaults: applying ALL available app defaults"
+apply_safari_defaults() {
+  local script="$DOTFILES_ROOT/scripts/apply_safari_defaults.sh"
+  if [ -x "$script" ]; then
+    "$script" || echo "Safari defaults failed (continuing)"
+  else
+    echo "Safari defaults script not found: $script (skipping)"
+  fi
+}
 
+apply_textedit_defaults() {
+  local script="$DOTFILES_ROOT/scripts/apply_textedit_defaults.sh"
+  if [ -x "$script" ]; then
+    "$script" || echo "TextEdit defaults failed (continuing)"
+  else
+    echo "TextEdit defaults script not found: $script (skipping)"
+  fi
+}
+
+step_app_defaults_all() {
+  echo "==> App defaults: applying ALL defaults (Finder + System + TextEdit + Safari)"
+
+  apply_system_defaults
   apply_finder_defaults
+  apply_safari_defaults
+  apply_textedit_defaults
 
   echo "==> App defaults (ALL) complete"
 }
 
+# -------- Step 4: App defaults submenu (interactive) --------
 step_app_defaults_menu() {
   while true; do
     echo "==> Step 4: Set app defaults"
     echo
     echo "Choose defaults to apply:"
-    echo "  1) Finder defaults"
-    echo "  2) All app defaults"
-    echo "  3) Back to main menu"
+    echo "  1) System defaults"
+    echo "  2) Finder defaults"
+    echo "  3) Safari defaults"
+    echo "  4) TextEdit defaults"
+    echo "  5) All defaults"
+    echo "  6) Back to main menu"
     echo
 
-    read -r -p "Selection [1-3]: " subchoice
+    read -r -p "Selection [1-6]: " subchoice
     echo
 
-    case "${subchoice:-3}" in
-      1)
-        echo "==> Applying Finder defaults"
-        apply_finder_defaults
-        ;;
-      2)
-        step_app_defaults_all
-        ;;
-      3)
-        echo "Back to main menu."
-        return 0
-        ;;
-      *)
-        echo "Unknown choice: ${subchoice}. Try again."
-        ;;
+    case "${subchoice:-6}" in
+      1) apply_system_defaults ;;
+      2) apply_finder_defaults ;;
+      3) apply_safari_defaults ;;
+      4) apply_textedit_defaults ;;
+      5) step_app_defaults_all ;;
+      6) echo "Back to main menu."; return 0 ;;
+      *) echo "Unknown choice: ${subchoice}. Try again." ;;
     esac
 
     echo

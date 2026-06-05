@@ -25,4 +25,9 @@ defaults write NSGlobalDomain "NSTableViewDefaultSizeMode" -int 1
 # Show status bar
 defaults write com.apple.finder ShowStatusBar -bool true
 
+# Desktop: drives/media visibility
+defaults write com.apple.finder ShowHardDrivesOnDesktop -bool false
+defaults write com.apple.finder ShowExternalHardDrivesOnDesktop -bool false
+defaults write com.apple.finder ShowRemovableMediaOnDesktop -bool true
+
 killall Finder
