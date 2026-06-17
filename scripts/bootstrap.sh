@@ -98,6 +98,12 @@ step_install_apps() {
     echo "pyenv not found; skipping pyenv install."
   fi
 
+  if [ -x "$DOTFILES_ROOT/scripts/install_hugo_0_141_0.sh" ]; then
+    "$DOTFILES_ROOT/scripts/install_hugo_0_141_0.sh" || echo "Hugo install failed (continuing)"
+  else
+    echo "Hugo install script missing/executable not found; skipping Hugo install."
+  fi
+
   if [ -x "$DOTFILES_ROOT/scripts/install_mas_apps.sh" ]; then
     "$DOTFILES_ROOT/scripts/install_mas_apps.sh" || echo "MAS install step failed (continuing)"
   else

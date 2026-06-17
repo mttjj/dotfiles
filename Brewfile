@@ -1,7 +1,6 @@
 # Minimal starter Brewfile (install only; no prune)
 
 # --- formulae ---
-brew "hugo"
 brew "mas"
 brew "sqlite"
 brew "zsh-syntax-highlighting"
