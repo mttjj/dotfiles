@@ -15,9 +15,9 @@ link_file() {
   fi
 }
 
-# -------- Step 1: Symlinks --------
+# -------- Symlinks --------
 step_symlink() {
-  echo "==> Step 1: Symlink dotfiles"
+  echo "==> Symlink dotfiles"
 
   link_file "$DOTFILES_ROOT/files/.zshrc" "$HOME/.zshrc"
   link_file "$DOTFILES_ROOT/files/.zprofile" "$HOME/.zprofile"
@@ -36,16 +36,16 @@ step_symlink() {
       || echo "git core.excludesfile failed (continuing)"
   fi
 
-  echo "==> Step 1 complete"
+  echo "==> Symlink dotfiles complete"
 }
 
-# -------- Step 2: Ensure Homebrew --------
+# -------- Ensure Homebrew --------
 step_install_homebrew() {
-  echo "==> Step 2: Install Homebrew (ensure 'brew' exists)"
+  echo "==> Install Homebrew (ensure 'brew' exists)"
 
   if have_cmd brew; then
     echo "Homebrew already installed: $(brew --prefix 2>/dev/null || true)"
-    echo "==> Step 2 complete"
+    echo "==> Ensure Homebrew complete"
     return 0
   fi
 
@@ -65,12 +65,12 @@ step_install_homebrew() {
   fi
 
   echo "Homebrew now: $(brew --prefix 2>/dev/null || true)"
-  echo "==> Step 2 complete"
+  echo "==> Ensure Homebrew complete"
 }
 
-# -------- Step 3: Apps --------
+# -------- Apps --------
 step_install_apps() {
-  echo "==> Step 3: Install apps (Homebrew bundle + pyenv + MAS)"
+  echo "==> Install apps (Homebrew bundle + pyenv + MAS)"
 
   if have_cmd brew; then
     if [ -f "$DOTFILES_ROOT/Brewfile" ]; then
@@ -110,7 +110,7 @@ step_install_apps() {
     echo "MAS install script missing/executable not found; skipping MAS step."
   fi
 
-  echo "==> Step 3 complete"
+  echo "==> Install apps complete"
 }
 
 # -------- Defaults runners --------
@@ -161,10 +161,10 @@ step_app_defaults_all() {
   echo "==> App defaults (ALL) complete"
 }
 
-# -------- Step 4: App defaults submenu (interactive) --------
+# -------- App defaults submenu (interactive) --------
 step_app_defaults_menu() {
   while true; do
-    echo "==> Step 4: Set app defaults"
+    echo "==> App defaults: Set app defaults"
     echo
     echo "Choose defaults to apply:"
     echo "  1) System defaults"
@@ -192,12 +192,35 @@ step_app_defaults_menu() {
   done
 }
 
-# -------- Step 5: Do everything (non-interactive) --------
+# -------- Disable backup auto-mount --------
+step_disable_backup_auto_mount_interactive() {
+  echo "==> Step 6: Disable backup auto-mount (edit /etc/fstab)"
+  if [ -x "$DOTFILES_ROOT/scripts/disable_backup_auto_mount.sh" ]; then
+    "$DOTFILES_ROOT/scripts/disable_backup_auto_mount.sh" || echo "Auto-mount disable failed (continuing)"
+  else
+    echo "Auto-mount disable script missing/executable not found; skipping."
+  fi
+}
+
+step_disable_backup_auto_mount_noninteractive() {
+  echo "==> Auto-mount disable: best-effort (non-interactive)"
+  if [ -x "$DOTFILES_ROOT/scripts/disable_backup_auto_mount.sh" ]; then
+    "$DOTFILES_ROOT/scripts/disable_backup_auto_mount.sh" --assume-yes || echo "Auto-mount disable failed (continuing)"
+  else
+    echo "Auto-mount disable script missing/executable not found; skipping."
+  fi
+}
+
+
+# -------- Do everything (non-interactive) --------
 step_all_noninteractive() {
   step_symlink
   step_install_homebrew
   step_install_apps
   step_app_defaults_all
+
+  step_disable_backup_auto_mount_noninteractive
+
   echo "Done."
 }
 
@@ -210,20 +233,22 @@ main_menu() {
     echo "  2) Install Homebrew"
     echo "  3) Install apps (Homebrew + MAS + pyenv)"
     echo "  4) Set app defaults (interactive)"
-    echo "  5) Do everything (non-interactive)"
-    echo "  6) Exit"
+    echo "  5) Disable backup auto-mount (requires sudo)"
+    echo "  6) Do everything (non-interactive)"
+    echo "  7) Exit"
     echo
 
-    read -r -p "Selection [1-6]: " choice
+    read -r -p "Selection [1-7]: " choice
     echo
 
-    case "${choice:-6}" in
+    case "${choice:-7}" in
       1) step_symlink ;;
       2) step_install_homebrew ;;
       3) step_install_apps ;;
       4) step_app_defaults_menu ;;
-      5) step_all_noninteractive; exit 0 ;;
-      6) echo "Exiting."; exit 0 ;;
+      5) step_disable_backup_auto_mount_interactive ;;
+      6) step_all_noninteractive; exit 0 ;;
+      7) echo "Exiting."; exit 0 ;;
       *) echo "Unknown choice: ${choice}. Try again." ;;
     esac
   done
