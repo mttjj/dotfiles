@@ -17,14 +17,16 @@ if have_cmd hugo; then
   fi
 fi
 
+echo "==> Installing Hugo ${HUGO_VERSION}"
+
 # Prereqs
-have_cmd brew || { echo "brew not found; run bootstrap step 2 first."; exit 1; }
-have_cmd git  || { echo "git not found; install it via brew first."; exit 1; }
+have_cmd brew || { echo "brew not found; run bootstrap step 2 first." >&2; exit 1; }
+have_cmd git  || { echo "git not found; install it via brew first." >&2; exit 1; }
 
 # Ensure Go exists for building (needed for hugo build)
 if ! have_cmd go; then
-  echo "Go not found; installing Go via brew (best effort)."
-  brew install go || { echo "Failed to install go."; exit 1; }
+  echo "Go not found; installing Go via brew..."
+  brew install go || { echo "Failed to install go." >&2; exit 1; }
 fi
 
 # (Optional, but makes "brew pin hugo" work more reliably)
@@ -70,4 +72,4 @@ hugo version
 echo "Pinning Hugo in Homebrew..."
 brew pin hugo >/dev/null 2>&1 || true
 
-echo "Done."
+echo "==> Hugo ${HUGO_VERSION} installation complete"

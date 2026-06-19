@@ -9,15 +9,15 @@ link_file() {
   local src="$1"
   local dst="$2"
   if [ -e "$src" ]; then
-    "$DOTFILES_ROOT/scripts/link.sh" "$src" "$dst" || echo "Link failed: $dst (continuing)"
+    "$DOTFILES_ROOT/scripts/link.sh" "$src" "$dst" || echo "Link failed: $dst (continuing)" >&2
   else
-    echo "Missing source: $src (skipping link to $dst)"
+    echo "Missing source: $src (skipping link to $dst)" >&2
   fi
 }
 
 # -------- Symlinks --------
 step_symlink() {
-  echo "==> Symlink dotfiles"
+  echo "==> Symlinking dotfiles"
 
   link_file "$DOTFILES_ROOT/files/.zshrc" "$HOME/.zshrc"
   link_file "$DOTFILES_ROOT/files/.zprofile" "$HOME/.zprofile"
@@ -33,30 +33,29 @@ step_symlink() {
   if have_cmd git; then
     mkdir -p "$HOME/.config/git"
     git config --global core.excludesfile "$HOME/.config/git/ignore" \
-      || echo "git core.excludesfile failed (continuing)"
+      || echo "git core.excludesfile failed (continuing)" >&2
   fi
 
-  echo "==> Symlink dotfiles complete"
+  echo "==> Symlinking dotfiles complete"
 }
 
 # -------- Ensure Homebrew --------
 step_install_homebrew() {
-  echo "==> Install Homebrew (ensure 'brew' exists)"
+  echo "==> Installing Homebrew (if not present)"
 
   if have_cmd brew; then
     echo "Homebrew already installed: $(brew --prefix 2>/dev/null || true)"
-    echo "==> Ensure Homebrew complete"
+    echo "==> Homebrew check complete"
     return 0
   fi
 
-  echo "Homebrew not found."
-  echo "Attempting install (curl-based)."
+  echo "Homebrew not found; attempting install."
 
   if have_cmd curl; then
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" \
-      || { echo "Homebrew install failed. Continuing."; return 0; }
+      || { echo "Homebrew install failed (continuing)." >&2; return 0; }
   else
-    echo "curl not found; can't auto-install Homebrew. Install Homebrew manually and re-run."
+    echo "curl not found; cannot auto-install Homebrew. Install manually and re-run." >&2
     return 0
   fi
 
@@ -65,108 +64,111 @@ step_install_homebrew() {
   fi
 
   echo "Homebrew now: $(brew --prefix 2>/dev/null || true)"
-  echo "==> Ensure Homebrew complete"
+  echo "==> Homebrew check complete"
 }
 
 # -------- Apps --------
 step_install_apps() {
-  echo "==> Install apps (Homebrew bundle + pyenv + MAS)"
+  echo "==> Installing apps (Homebrew bundle, pyenv, Hugo, MAS)"
 
   if have_cmd brew; then
     if [ -f "$DOTFILES_ROOT/Brewfile" ]; then
-      brew bundle --file "$DOTFILES_ROOT/Brewfile" || echo "brew bundle failed (continuing)"
+      echo "Running brew bundle..."
+      brew bundle --file "$DOTFILES_ROOT/Brewfile" || echo "brew bundle failed (continuing)." >&2
     else
-      echo "No Brewfile found at $DOTFILES_ROOT/Brewfile; skipping brew bundle."
+      echo "No Brewfile found at $DOTFILES_ROOT/Brewfile; skipping brew bundle." >&2
     fi
   else
-    echo "Homebrew not found; skipping brew bundle."
+    echo "Homebrew not found; skipping brew bundle." >&2
   fi
 
   if have_cmd pyenv; then
     if [ -f "$HOME/.pyenv/version" ]; then
       VER="$(sed -e 's/#.*$//' -e '/^[[:space:]]*$/d' "$HOME/.pyenv/version" | head -n1)"
       if [ -n "$VER" ]; then
-        pyenv install -s "$VER" || echo "pyenv install failed for $VER (continuing)"
-        pyenv global "$VER" || echo "pyenv global failed for $VER (continuing)"
+        echo "Installing Python $VER via pyenv..."
+        pyenv install -s "$VER" || echo "pyenv install failed for $VER (continuing)." >&2
+        pyenv global "$VER" || echo "pyenv global failed for $VER (continuing)." >&2
       else
-        echo "Could not parse a version from $HOME/.pyenv/version"
+        echo "Could not parse a version from $HOME/.pyenv/version." >&2
       fi
     else
-      echo "No $HOME/.pyenv/version found; skipping pyenv install."
+      echo "No $HOME/.pyenv/version found; skipping pyenv install." >&2
     fi
   else
-    echo "pyenv not found; skipping pyenv install."
+    echo "pyenv not found; skipping pyenv install." >&2
   fi
 
   if [ -x "$DOTFILES_ROOT/scripts/install_hugo_0_141_0.sh" ]; then
-    "$DOTFILES_ROOT/scripts/install_hugo_0_141_0.sh" || echo "Hugo install failed (continuing)"
+    echo "Running Hugo install script..."
+    "$DOTFILES_ROOT/scripts/install_hugo_0_141_0.sh" || echo "Hugo install failed (continuing)." >&2
   else
-    echo "Hugo install script missing/executable not found; skipping Hugo install."
+    echo "Hugo install script missing; skipping Hugo install." >&2
   fi
 
   if [ -x "$DOTFILES_ROOT/scripts/install_mas_apps.sh" ]; then
-    "$DOTFILES_ROOT/scripts/install_mas_apps.sh" || echo "MAS install step failed (continuing)"
+    "$DOTFILES_ROOT/scripts/install_mas_apps.sh" || echo "MAS install step failed (continuing)." >&2
   else
-    echo "MAS install script missing/executable not found; skipping MAS step."
+    echo "MAS install script missing; skipping MAS step." >&2
   fi
 
-  echo "==> Install apps complete"
+  echo "==> Installing apps complete"
 }
 
 # -------- Defaults runners --------
 apply_system_defaults() {
   local system_script="$DOTFILES_ROOT/scripts/apply_system_defaults.sh"
   if [ -x "$system_script" ]; then
-    "$system_script" || echo "System defaults failed (continuing)"
+    "$system_script" || echo "System defaults failed (continuing)." >&2
   else
-    echo "System defaults script not found: $system_script (skipping)"
+    echo "System defaults script not found: $system_script (skipping)."
   fi
 }
 
 apply_finder_defaults() {
   local finder_script="$DOTFILES_ROOT/scripts/apply_finder_defaults.sh"
   if [ -x "$finder_script" ]; then
-    "$finder_script" || echo "Finder defaults failed (continuing)"
+    "$finder_script" || echo "Finder defaults failed (continuing)." >&2
   else
-    echo "Finder defaults script not found: $finder_script (skipping)"
+    echo "Finder defaults script not found: $finder_script (skipping)."
   fi
 }
 
 apply_safari_defaults() {
   local script="$DOTFILES_ROOT/scripts/apply_safari_defaults.sh"
   if [ -x "$script" ]; then
-    "$script" || echo "Safari defaults failed (continuing)"
+    "$script" || echo "Safari defaults failed (continuing)." >&2
   else
-    echo "Safari defaults script not found: $script (skipping)"
+    echo "Safari defaults script not found: $script (skipping)."
   fi
 }
 
 apply_textedit_defaults() {
   local script="$DOTFILES_ROOT/scripts/apply_textedit_defaults.sh"
   if [ -x "$script" ]; then
-    "$script" || echo "TextEdit defaults failed (continuing)"
+    "$script" || echo "TextEdit defaults failed (continuing)." >&2
   else
-    echo "TextEdit defaults script not found: $script (skipping)"
+    echo "TextEdit defaults script not found: $script (skipping)."
   fi
 }
 
 step_app_defaults_all() {
-  echo "==> App defaults: applying ALL defaults (Finder + System + TextEdit + Safari)"
+  echo "==> Applying all app defaults (Finder, System, TextEdit, Safari)"
 
   apply_system_defaults
   apply_finder_defaults
   apply_safari_defaults
   apply_textedit_defaults
 
-  echo "==> App defaults (ALL) complete"
+  echo "==> All app defaults applied"
 }
 
 # -------- App defaults submenu (interactive) --------
 step_app_defaults_menu() {
   while true; do
-    echo "==> App defaults: Set app defaults"
+    echo "==> App defaults: select defaults to apply"
     echo
-    echo "Choose defaults to apply:"
+    echo "Options:"
     echo "  1) System defaults"
     echo "  2) Finder defaults"
     echo "  3) Safari defaults"
@@ -194,20 +196,19 @@ step_app_defaults_menu() {
 
 # -------- Disable backup auto-mount --------
 step_disable_backup_auto_mount_interactive() {
-  echo "==> Step 6: Disable backup auto-mount (edit /etc/fstab)"
   if [ -x "$DOTFILES_ROOT/scripts/disable_backup_auto_mount.sh" ]; then
-    "$DOTFILES_ROOT/scripts/disable_backup_auto_mount.sh" || echo "Auto-mount disable failed (continuing)"
+    "$DOTFILES_ROOT/scripts/disable_backup_auto_mount.sh" || echo "Auto-mount disable failed (continuing)." >&2
   else
-    echo "Auto-mount disable script missing/executable not found; skipping."
+    echo "Auto-mount disable script missing; skipping."
   fi
 }
 
 step_disable_backup_auto_mount_noninteractive() {
-  echo "==> Auto-mount disable: best-effort (non-interactive)"
+  echo "==> Disabling backup auto-mount (non-interactive)"
   if [ -x "$DOTFILES_ROOT/scripts/disable_backup_auto_mount.sh" ]; then
-    "$DOTFILES_ROOT/scripts/disable_backup_auto_mount.sh" --assume-yes || echo "Auto-mount disable failed (continuing)"
+    "$DOTFILES_ROOT/scripts/disable_backup_auto_mount.sh" --assume-yes || echo "Auto-mount disable failed (continuing)." >&2
   else
-    echo "Auto-mount disable script missing/executable not found; skipping."
+    echo "Auto-mount disable script missing; skipping."
   fi
 }
 
@@ -218,17 +219,18 @@ step_all_noninteractive() {
   step_install_homebrew
   step_install_apps
   step_app_defaults_all
-
   step_disable_backup_auto_mount_noninteractive
 
-  echo "Done."
+  echo "==> All steps complete"
 }
 
 # -------- Main menu --------
 main_menu() {
   while true; do
     echo
-    echo "=== Dotfiles bootstrap ==="
+    echo "=== Dotfiles Bootstrap ==="
+    echo
+    echo "Options:"
     echo "  1) Symlink dotfiles"
     echo "  2) Install Homebrew"
     echo "  3) Install apps (Homebrew + MAS + pyenv)"

@@ -71,7 +71,9 @@ skipped_no_uuid=0
 skipped_sudo=0
 
 if [ "$ASSUME_YES" -ne 1 ]; then
-  echo "About to edit /etc/fstab (requires sudo) to disable auto-mount for:"
+  echo "==> Disabling auto-mount in /etc/fstab (requires sudo)"
+  echo
+  echo "Volumes:"
   printf '  - %s\n' "${VOLUMES[@]}"
   echo
   read -r -p "Proceed? [y/N]: " yn
@@ -94,7 +96,7 @@ for vol in "${VOLUMES[@]}"; do
 
   uuid="$(get_volume_uuid "$vol" || true)"
   if [ -z "$uuid" ]; then
-    statuses+=("$vol: SKIPPED (could not determine Volume UUID)")
+    statuses+=("$vol: SKIPPED (could not determine volume UUID)")
     skipped_no_uuid=$((skipped_no_uuid + 1))
     continue
   fi
@@ -105,8 +107,7 @@ for vol in "${VOLUMES[@]}"; do
     statuses+=("$vol: OK (already configured in /etc/fstab)")
     already=$((already + 1))
   else
-    echo "Adding to /etc/fstab for '$vol' ($uuid):"
-    echo "  $line"
+    echo "Adding to /etc/fstab: $vol ($uuid)"
     append_to_fstab "$line"
     statuses+=("$vol: OK (added entry)")
     added=$((added + 1))
@@ -114,9 +115,9 @@ for vol in "${VOLUMES[@]}"; do
 done
 
 echo
-echo "Auto-mount disable summary:"
-echo "  Added:    $added"
-echo "  Already:  $already"
+echo "==> Auto-mount disable summary"
+echo "  Added:   $added"
+echo "  Already: $already"
 echo "  Skipped (no UUID): $skipped_no_uuid"
 if [ "$skipped_sudo" -eq 1 ]; then
   echo "  Skipped (sudo non-interactive not authorized): 1"
@@ -127,4 +128,4 @@ for s in "${statuses[@]}"; do
 done
 
 echo
-echo "Done. CCC should handle mounting/unmounting around clone jobs."
+echo "==> Auto-mount disable complete"

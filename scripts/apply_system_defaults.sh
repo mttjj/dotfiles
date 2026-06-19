@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+echo "==> Applying System defaults"
+
 # Dock
 defaults write com.apple.dock tilesize -int 39
 defaults write com.apple.dock show-recents -bool false
@@ -24,4 +26,6 @@ defaults write NSGlobalDomain AppleSpacesSwitchOnActivate -bool true
 # separate Spaces per display (0 => off)
 defaults write com.apple.spaces spans-displays -int 0
 
-killall Dock || true
+killall Dock 2>/dev/null || true
+
+echo "==> System defaults applied"

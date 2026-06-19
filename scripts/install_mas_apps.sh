@@ -14,7 +14,11 @@ if [ ! -f "$MAS_APPS_FILE" ]; then
   exit 0
 fi
 
+echo "==> Installing MAS apps"
+
 installed="$(mas list 2>/dev/null | awk '{print $1}' || true)"
+installed_count=0
+skipped_count=0
 
 while IFS= read -r line; do
   line="${line%%#*}"
@@ -22,14 +26,15 @@ while IFS= read -r line; do
   [ -z "$line" ] && continue
 
   if echo "$installed" | grep -qx "$line"; then
-    echo "MAS app $line already installed; skipping."
+    skipped_count=$((skipped_count + 1))
     continue
   fi
 
-  echo "Installing MAS app $line..."
-  if mas install "$line"; then
-    echo "Installed $line."
+  if mas install "$line" 2>/dev/null; then
+    installed_count=$((installed_count + 1))
   else
-    echo "Failed to install $line (continuing)."
+    echo "Failed to install MAS app $line (continuing)." >&2
   fi
 done < "$MAS_APPS_FILE"
+
+echo "==> MAS apps installation complete (installed: $installed_count, already present: $skipped_count)"
