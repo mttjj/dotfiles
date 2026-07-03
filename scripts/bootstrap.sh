@@ -152,13 +152,23 @@ apply_textedit_defaults() {
   fi
 }
 
+apply_iterm2_defaults() {
+  local script="$DOTFILES_ROOT/scripts/apply_iterm2_defaults.sh"
+  if [ -x "$script" ]; then
+    "$script" || echo "iTerm2 defaults failed (continuing)." >&2
+  else
+    echo "iTerm2 defaults script not found: $script (skipping)."
+  fi
+}
+
 step_app_defaults_all() {
-  echo "==> Applying all app defaults (Finder, System, TextEdit, Safari)"
+  echo "==> Applying all app defaults (Finder, System, TextEdit, Safari, iTerm2)"
 
   apply_system_defaults
   apply_finder_defaults
   apply_safari_defaults
   apply_textedit_defaults
+  apply_iterm2_defaults
 
   echo "==> All app defaults applied"
 }
@@ -173,20 +183,22 @@ step_app_defaults_menu() {
     echo "  2) Finder defaults"
     echo "  3) Safari defaults"
     echo "  4) TextEdit defaults"
-    echo "  5) All defaults"
-    echo "  6) Back to main menu"
+    echo "  5) iTerm2 defaults"
+    echo "  6) All defaults"
+    echo "  7) Back to main menu"
     echo
 
-    read -r -p "Selection [1-6]: " subchoice
+    read -r -p "Selection [1-7]: " subchoice
     echo
 
-    case "${subchoice:-6}" in
+    case "${subchoice:-7}" in
       1) apply_system_defaults ;;
       2) apply_finder_defaults ;;
       3) apply_safari_defaults ;;
       4) apply_textedit_defaults ;;
-      5) step_app_defaults_all ;;
-      6) echo "Back to main menu."; return 0 ;;
+      5) apply_iterm2_defaults ;;
+      6) step_app_defaults_all ;;
+      7) echo "Back to main menu."; return 0 ;;
       *) echo "Unknown choice: ${subchoice}. Try again." ;;
     esac
 
