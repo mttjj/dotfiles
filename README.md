@@ -41,8 +41,13 @@ Choose individual steps or run "6" for a complete unattended setup.
 
 ## Scripts
 
+- **bootstrap.sh** — Main interactive setup orchestrator
 - **apply_*.sh** — Set macOS app defaults (System, Finder, Safari, TextEdit)
 - **disable_backup_auto_mount.sh** — Prevent Time Machine auto-mounting
 - **install_hugo_0_141_0.sh** — Install specific Hugo version
 - **install_mas_apps.sh** — Install MAS apps from MasApps.txt
 - **link.sh** — Symlink utility (handles backups of existing files)
+
+### Maintenance
+
+- **verify.sh** — Check that all symlinks and tools are working correctly
