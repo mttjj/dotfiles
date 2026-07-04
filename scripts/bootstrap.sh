@@ -69,7 +69,7 @@ step_install_homebrew() {
 
 # -------- Apps --------
 step_install_apps() {
-  echo "==> Installing apps (Homebrew bundle, pyenv, Hugo, MAS)"
+  echo "==> Installing apps (Homebrew bundle, Developer apps, pyenv, Hugo, MAS)"
 
   if have_cmd brew; then
     if [ -f "$DOTFILES_ROOT/Brewfile" ]; then
@@ -80,6 +80,12 @@ step_install_apps() {
     fi
   else
     echo "Homebrew not found; skipping brew bundle." >&2
+  fi
+
+  if [ -x "$DOTFILES_ROOT/scripts/install_developer_apps.sh" ]; then
+    "$DOTFILES_ROOT/scripts/install_developer_apps.sh" || echo "Developer apps install failed (continuing)." >&2
+  else
+    echo "Developer apps script missing; skipping developer apps." >&2
   fi
 
   if have_cmd pyenv; then
@@ -245,7 +251,7 @@ main_menu() {
     echo "Options:"
     echo "  1) Symlink dotfiles"
     echo "  2) Install Homebrew"
-    echo "  3) Install apps (Homebrew + MAS + pyenv)"
+    echo "  3) Install apps (Homebrew + Developer + MAS + pyenv)"
     echo "  4) Set app defaults (interactive)"
     echo "  5) Disable backup auto-mount (requires sudo)"
     echo "  6) Do everything (non-interactive)"
