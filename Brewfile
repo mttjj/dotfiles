@@ -2,6 +2,7 @@
 
 # --- formulae ---
 brew "mas"
+brew "pyenv"
 brew "sqlite"
 brew "zsh-syntax-highlighting"
 
