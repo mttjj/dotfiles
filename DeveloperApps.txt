@@ -3,5 +3,5 @@
 # FileType: zip or dmg
 # For Komga, the URL is parsed to find the latest arm64 build
 
-Komga|https://download.komga.org|/Applications/Komga.app|zip
+#Komga|https://download.komga.org|/Applications/Komga.app|zip
 XLD|https://tmkk.undo.jp/xld/|/Applications/XLD.app|dmg

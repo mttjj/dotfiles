@@ -3,6 +3,7 @@
 
 1586435171  # Actions
 1440147259  # AdGuard Mini
+937984704   # Amphetamine
 1601151613  # Baking Soda
 1091189122  # Bear
 975937182   # Fantastical
@@ -10,7 +11,7 @@
 6740135016  # Game Tracker
 1474335294  # GoodLinks
 1544743900  # Hush
-408937559   # iFlicks
+#408937559   # iFlicks
 1136220934  # Infuse
 1622835804  # Kagi for Safari
 409183694   # Keynote
