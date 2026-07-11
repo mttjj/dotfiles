@@ -13,15 +13,11 @@ A macOS dotfiles setup repository for bootstrapping a new machine with tools, co
 
 ### 1. Preflight Steps
 
-```bash
-curl -fsSL https://raw.githubusercontent.com/mttjj/dotfiles/main/scripts/preflight.sh | bash
-```
+1. Install developer commandline tools
+    - Open Terminal and run: `xcode-select --install`
 
-This script will:
-- Install Xcode Command Line Tools if needed
-- Generate an SSH key if needed
-- Display your public key
-- Guide you to add it to GitHub
+2. Generate an SSH key to authenticate with GitHub
+    - Open Terminal and run: `curl -fsSL https://raw.githubusercontent.com/mttjj/dotfiles/main/scripts/preflight.sh | bash`
 
 ### 2. Clone and bootstrap
 
