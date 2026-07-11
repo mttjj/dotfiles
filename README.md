@@ -11,10 +11,22 @@ A macOS dotfiles setup repository for bootstrapping a new machine with tools, co
 
 ## Quick Start
 
-Clone to `~/.dotfiles`, then run the bootstrap:
+### 1. Set up SSH keys (first time only)
 
 ```bash
-git clone https://github.com/yourusername/dotfiles.git ~/.dotfiles
+# Download and run the SSH setup script
+curl -fsSL https://raw.githubusercontent.com/mttjj/dotfiles/main/scripts/setup-ssh.sh | bash
+```
+
+This script will:
+- Generate an SSH key if you don't have one
+- Display your public key
+- Guide you to add it to GitHub
+
+### 2. Clone and bootstrap
+
+```bash
+git clone git@github.com:mttjj/dotfiles.git ~/.dotfiles
 ~/.dotfiles/scripts/bootstrap.sh
 ```
 
