@@ -1,6 +1,14 @@
 #!/bin/bash
 set -e
 
+# Check for Xcode Command Line Tools
+if ! command -v git &> /dev/null; then
+    echo "Installing Xcode Command Line Tools..."
+    xcode-select --install
+    echo "Please complete the installation and run this script again."
+    exit 0
+fi
+
 echo "🔑 GitHub SSH Key Setup"
 echo "======================="
 echo ""
@@ -31,9 +39,7 @@ echo "✓ SSH key ready at $SSH_KEY_PATH"
 echo ""
 echo "Next steps:"
 echo "1. Copy this public key:"
-echo "─────────────────────────────────────────────────"
 cat "$SSH_KEY_PATH.pub"
-echo "─────────────────────────────────────────────────"
 echo ""
 echo "2. Add it to GitHub:"
 echo "   → Go to https://github.com/settings/keys"

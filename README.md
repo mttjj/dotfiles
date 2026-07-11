@@ -11,15 +11,15 @@ A macOS dotfiles setup repository for bootstrapping a new machine with tools, co
 
 ## Quick Start
 
-### 1. Set up SSH keys (first time only)
+### 1. Preflight Steps
 
 ```bash
-# Download and run the SSH setup script
-curl -fsSL https://raw.githubusercontent.com/mttjj/dotfiles/main/scripts/setup-ssh.sh | bash
+curl -fsSL https://raw.githubusercontent.com/mttjj/dotfiles/main/scripts/preflight.sh | bash
 ```
 
 This script will:
-- Generate an SSH key if you don't have one
+- Install Xcode Command Line Tools if needed
+- Generate an SSH key if needed
 - Display your public key
 - Guide you to add it to GitHub
 
