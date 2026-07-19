@@ -1,0 +1,24 @@
+{
+	auto_https off
+}
+
+http://jellyfin.neptune.internal {
+    reverse_proxy host.docker.internal:8096 {
+        header_up Host {host}
+        header_up X-Real-IP {remote}
+        header_up X-Forwarded-For {remote}
+        header_up X-Forwarded-Proto {scheme}
+    }
+}
+
+http://audiobooks.neptune.internal {
+	reverse_proxy audiobookshelf:80
+}
+
+http://music.neptune.internal {
+	reverse_proxy navidrome:4533
+}
+
+http://comics.neptune.internal {
+	reverse_proxy komga:25600
+}

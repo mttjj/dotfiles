@@ -1,0 +1,63 @@
+services:
+  caddy:
+    image: caddy:2-alpine
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ~/.self-host/caddy/:/etc/caddy/
+      - ~/.self-host/caddy/data:/data
+      - ~/.self-host/caddy/config:/config
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - proxy
+
+  audiobookshelf:
+    image: ghcr.io/advplyr/audiobookshelf:latest
+    container_name: audiobookshelf
+    restart: unless-stopped
+    ports:
+      - "13378:80"
+    volumes:
+      - /Volumes/external/Audiobooks:/audiobooks:ro
+      - ~/.self-host/audiobookshelf/config:/config
+      - ~/.self-host/audiobookshelf/metadata:/metadata
+    networks:
+      - proxy
+
+
+  komga:
+    image: gotson/komga:latest
+    container_name: komga
+    restart: unless-stopped
+    ports:
+      - "25600:25600"
+    environment:
+      - SERVER_PORT=25600
+    volumes:
+      - /Volumes/external/Books/Comics:/comics:ro
+      - ~/.self-host/komga/config:/config
+    networks:
+      - proxy
+
+  navidrome:
+    image: deluan/navidrome:latest
+    container_name: navidrome
+    restart: unless-stopped
+    ports:
+      - "4533:4533"
+    environment:
+      - ND_SCANSCHEDULE=0
+      - ND_LOGLEVEL=info
+      - ND_SESSIONTIMEOUT=24h
+    volumes:
+      - /Volumes/external/Music:/music:ro
+      - ~/.self-host/navidrome/data:/data
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    driver: bridge

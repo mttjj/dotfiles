@@ -30,6 +30,9 @@ step_symlink() {
   link_file "$DOTFILES_ROOT/files/.gitconfig" "$HOME/.gitconfig"
   link_file "$DOTFILES_ROOT/files/.config/git/ignore" "$HOME/.config/git/ignore"
 
+  link_file "$DOTFILES_ROOT/files/.self-host/docker-compose.yml" "$HOME/.self-host/docker-compose.yml"
+  link_file "$DOTFILES_ROOT/files/.self-host/caddy/Caddyfile" "$HOME/.self-host/caddy/Caddyfile"
+
   if have_cmd git; then
     mkdir -p "$HOME/.config/git"
     git config --global core.excludesfile "$HOME/.config/git/ignore" \
