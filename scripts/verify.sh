@@ -38,6 +38,7 @@ check_symlink "$DOTFILES_ROOT/files/.zprofile" "$HOME/.zprofile" || all_ok=$?
 check_symlink "$DOTFILES_ROOT/files/.aliases" "$HOME/.aliases" || all_ok=$?
 check_symlink "$DOTFILES_ROOT/files/.functions" "$HOME/.functions" || all_ok=$?
 check_symlink "$DOTFILES_ROOT/files/.brew-env" "$HOME/.brew-env" || all_ok=$?
+check_symlink "$DOTFILES_ROOT/files/.cloudflared-env" "$HOME/.cloudflared-env" || all_ok=$?
 check_symlink "$DOTFILES_ROOT/files/.ssh/config" "$HOME/.ssh/config" || all_ok=$?
 check_symlink "$DOTFILES_ROOT/files/.pyenv/version" "$HOME/.pyenv/version" || all_ok=$?
 check_symlink "$DOTFILES_ROOT/files/.gitconfig" "$HOME/.gitconfig" || all_ok=$?

@@ -1,6 +1,7 @@
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
 [ -f "$HOME/.brew-env" ] && source "$HOME/.brew-env"
+[ -f "$HOME/.cloudflared-env" ] && source "$HOME/.cloudflared-env"
 
 # Added by OrbStack: command-line tools and integration
 # This won't be added again if you remove it.

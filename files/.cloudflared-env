@@ -1,0 +1,1 @@
+export TUNNEL_ORIGIN_CERT=~/.self-host/cloudflared/cert.pem

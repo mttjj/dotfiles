@@ -24,6 +24,7 @@ step_symlink() {
   link_file "$DOTFILES_ROOT/files/.aliases" "$HOME/.aliases"
   link_file "$DOTFILES_ROOT/files/.functions" "$HOME/.functions"
   link_file "$DOTFILES_ROOT/files/.brew-env" "$HOME/.brew-env"
+  link_file "$DOTFILES_ROOT/files/.cloudflared-env" "$HOME/.cloudflared-env"
   link_file "$DOTFILES_ROOT/files/.ssh/config" "$HOME/.ssh/config"
   link_file "$DOTFILES_ROOT/files/.pyenv/version" "$HOME/.pyenv/version"
 

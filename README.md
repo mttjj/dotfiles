@@ -46,6 +46,7 @@ Choose individual steps or run "6" for a complete unattended setup.
 - **.ssh/config** — SSH configuration
 - **.pyenv/version** — Python version (installed via pyenv)
 - **.brew-env** — Homebrew environment variables
+- **.cloudflared-env** - Cloudflare environment variables
 
 ## Scripts
 
