@@ -6,13 +6,20 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ~/.self-host/caddy/:/etc/caddy/
-      - ~/.self-host/caddy/data:/data
-      - ~/.self-host/caddy/config:/config
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    networks:
-      - proxy
+      - ~/.self-host/caddy/Caddyfile:/etc/caddy/Caddyfile
+      - caddy-config:/config
+      - caddy-data:/data
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared
+    restart: unless-stopped
+    command: tunnel run
+    volumes:
+      - ~/.cloudflared/config.yml:/etc/cloudflared/config.yml:ro
+      - ~/.cloudflared/2eca5f14-caf8-4b89-8381-666a7b1a0cd6.json:/etc/cloudflared/2eca5f14-caf8-4b89-8381-666a7b1a0cd6.json:ro
+    depends_on:
+      - caddy
 
   audiobookshelf:
     image: ghcr.io/advplyr/audiobookshelf:latest
@@ -22,11 +29,18 @@ services:
       - "13378:80"
     volumes:
       - /Volumes/external/Audiobooks:/audiobooks:ro
-      - ~/.self-host/audiobookshelf/config:/config
-      - ~/.self-host/audiobookshelf/metadata:/metadata
-    networks:
-      - proxy
+      - abs-config:/config
+      - abs-metadata:/metadata
 
+  calibre-web:
+    image: lscr.io/linuxserver/calibre-web:latest
+    container_name: calibre-web
+    restart: unless-stopped
+    ports:
+      - "8083:8083"
+    volumes:
+      - /Volumes/external/Books/CalibreApp:/books
+      - calibre-web-config:/config
 
   komga:
     image: gotson/komga:latest
@@ -36,11 +50,11 @@ services:
       - "25600:25600"
     environment:
       - SERVER_PORT=25600
+      - KOMGA_LIBRARIES_SCAN_DIRECTORY_EXCLUSIONS=@supplements
     volumes:
       - /Volumes/external/Books/Comics:/comics:ro
-      - ~/.self-host/komga/config:/config
-    networks:
-      - proxy
+      - /Volumes/external/Books/Magazines:/magazines:ro
+      - komga-config:/config
 
   navidrome:
     image: deluan/navidrome:latest
@@ -54,10 +68,20 @@ services:
       - ND_SESSIONTIMEOUT=24h
     volumes:
       - /Volumes/external/Music:/music:ro
-      - ~/.self-host/navidrome/data:/data
-    networks:
-      - proxy
+      - navidrome-data:/data
 
-networks:
-  proxy:
-    driver: bridge
+volumes:
+  caddy-config:
+    external: true
+  caddy-data:
+    external: true
+  abs-config:
+    external: true
+  abs-metadata:
+    external: true
+  calibre-web-config:
+    external: true
+  komga-config:
+    external: true
+  navidrome-data:
+    external: true
