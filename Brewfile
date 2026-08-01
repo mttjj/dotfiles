@@ -1,6 +1,7 @@
 # Minimal starter Brewfile (install only; no prune)
 
 # --- formulae ---
+brew "cloudflared"
 brew "mas"
 brew "pyenv"
 brew "sqlite"
@@ -19,7 +20,7 @@ cask "fastmail"
 cask "handbrake-app"
 cask "iina"
 cask "iterm2"
-cask "Jellyfin"
+cask "jellyfin"
 cask "keepassxc"
 cask "makemkv"
 cask "meta"

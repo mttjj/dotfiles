@@ -13,9 +13,11 @@
 1136220934  # Infuse
 1622835804  # Kagi for Safari
 409183694   # Keynote
+6763518834  # NaviBeat
 1592917505  # Noir
 409203825   # Numbers
 409201541   # Pages
+1236567663  # Panels
 288419283   # RadarScope
 1524335878  # Under My Roof
 1591303229  # Vinegar
