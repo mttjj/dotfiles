@@ -1,1 +1,4 @@
 # Put custom functions here later
+function caddy-refresh {
+    docker exec -w /etc/caddy caddy caddy reload
+}
