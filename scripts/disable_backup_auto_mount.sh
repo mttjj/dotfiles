@@ -2,8 +2,8 @@
 set -euo pipefail
 
 VOLUMES=(
-  "internal-backup"
-  "external-backup"
+  "Media Backup - CCC"
+  "Mac Backup - CCC"
 )
 
 ASSUME_YES=0
